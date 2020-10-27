@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+
+<html xmlns:th="http://www.thymeleaf.org" lang="en" class="default-style">
+
+<head>
+    <title>学生信息录入</title>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="IE=edge,chrome=1">
+    <meta name="description" content="">
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+    <!-- Icon fonts -->
+    <link rel="stylesheet" href="/back/fonts/fontawesome.css">
+    <link rel="stylesheet" href="/back/fonts/ionicons.css">
+    <!-- Core stylesheets -->
+    <link rel="stylesheet" href="/back/css/bootstrap.css" class="theme-settings-bootstrap-css">
+    <link rel="stylesheet" href="/back/css/appwork.css" class="theme-settings-appwork-css">
+    <link rel="stylesheet" href="/back/css/theme-corporate.css" class="theme-settings-theme-css">
+    <link rel="stylesheet" href="/back/css/colors.css" class="theme-settings-colors-css">
+    <link rel="stylesheet" href="/back/css/uikit.css">
+    <link rel="stylesheet" href="/back/css/demo.css">
+</head>
+
+<body>
+<!-- update -->
+<div class="layout-wrapper layout-2">
+    <div class="layout-inner">
+        <div class="modal-body text-white">
+            <div class="form-group row">新增学生信息</div>
+            <hr/>
+            <form method="post" action="/student/insert">
+                <div class="form-group row">
+                    <label class="col-form-label col-sm-3 text-sm-right">考号</label>
+                    <div class="col-sm-5">
+                        <input type="text" class="form-control" placeholder="考号" name="num" required>
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label class="col-form-label col-sm-3 text-sm-right">名称</label>
+                    <div class="col-sm-5">
+                        <input type="text" class="form-control" placeholder="名称" name="name" required>
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label class="col-form-label col-sm-3 text-sm-right">班级</label>
+                    <div class="col-sm-5">
+                        <select name="classId" class="form-control">
+                            <option th:each="studentClass:${studentClassList}"
+                                    th:value="${studentClass.id}" th:text="${studentClass.className}"></option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label class="col-form-label col-sm-3 text-sm-right">登录用户名</label>
+                    <div class="col-sm-5">
+                        <input type="text" class="form-control" placeholder="登录用户名" name="userName" required>
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label class="col-form-label col-sm-3 text-sm-right">登录密码</label>
+                    <div class="col-sm-5">
+                        <input type="password" class="form-control" placeholder="登录密码" name="passWord" required>
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <div class="col-sm-7 ml-sm-auto">
+                        <button type="submit" class="btn btn-primary">save</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+<!--end -->
+
+<!-- Core scripts -->
+<script src="/back/js/layout-helpers.js"></script>
+<script src="/back/js/jquery.min.js"></script>
+<script src="/back/js/popper.js"></script>
+<script src="/back/js/bootstrap.js"></script>
+<script src="/back/js/sidenav.js"></script>
+<script src="/back/js/perfect-scrollbar.js"></script>
+<script src="/back/js/bootbox.js"></script>
+<!-- Libs -->
+<!-- Demo -->
+<script src="/back/js/demo.js"></script>
+</body>
+
+</html>

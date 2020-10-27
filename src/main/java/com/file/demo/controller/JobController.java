@@ -1,7 +1,11 @@
 package com.file.demo.controller;
 
+import com.file.demo.dao.CourseDao;
 import com.file.demo.dao.JobDao;
+import com.file.demo.dao.StudentClassDao;
 import com.file.demo.entity.Job;
+import com.file.demo.entity.Student;
+import com.file.demo.entity.StudentClass;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
@@ -9,6 +13,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.servlet.http.HttpServletRequest;
 import java.io.File;
 import java.io.IOException;
 import java.text.Format;
@@ -24,9 +29,40 @@ public class JobController {
     @Autowired
     private JobDao jobDao;
 
+    @Autowired
+    private CourseDao courseDao;
+
+    @Autowired
+    private StudentClassDao studentClassDao;
+
     @GetMapping("/job")
-    public String jobPage(Model model) {
-        model.addAttribute("list", jobDao.findAll());
+    public String jobPage(Model model, HttpServletRequest request) {
+        model.addAttribute("courseList", courseDao.findAll());
+        model.addAttribute("studentClassList", studentClassDao.findAll());
+        Student student = (Student) request.getSession().getAttribute("loginUser");
+        if(student != null){
+            model.addAttribute("list", jobDao.findAllByClassNameOrderByIdDesc(studentClassDao.findById(student.getClassId()).orElseGet(StudentClass::new).getClassName()));
+            model.addAttribute("userType", 2 == student.getType());
+        }else {
+            model.addAttribute("list", jobDao.findAllByOrderByIdDesc());
+        }
+        return "joblist";
+    }
+    @PostMapping("/job")
+    public String jobPage(Model model,@RequestParam("className") String className, @RequestParam("course") String course, HttpServletRequest request) {
+        model.addAttribute("course", course);
+        model.addAttribute("courseList", courseDao.findAll());
+        model.addAttribute("studentClassList", studentClassDao.findAll());
+        Student student = (Student) request.getSession().getAttribute("loginUser");
+        if(student != null){
+            className = studentClassDao.findById(student.getClassId()).orElseGet(StudentClass::new).getClassName();
+            model.addAttribute("list", jobDao.findAllByClassNameOrderByIdDesc(className));
+            model.addAttribute("userType", 2 == student.getType());
+            model.addAttribute("className", className);
+        }else{
+            model.addAttribute("list", jobDao.findAllByClassNameAndCourseOrderByIdDesc(className, course));
+            model.addAttribute("className", className);
+        }
         return "joblist";
     }
 
@@ -46,19 +82,21 @@ public class JobController {
     }
 
     @PostMapping("/fileUpload")
-    public String fileUpload(Model model, @RequestParam("file_upload") MultipartFile file, @RequestParam("id") Integer id, @RequestParam("name") String name) {
+    public String fileUpload(Model model, @RequestParam("file_upload") MultipartFile file, @RequestParam("id") Integer id, HttpServletRequest request) {
         if (file.isEmpty()) {
-            model.addAttribute("err", "文件为空，请重新上传");
+            model.addAttribute("error", "文件为空，请重新上传");
             return "error";
         }
         Job job = jobDao.getOne(id);
-        String newFilePath = filePath + "/" + job.getTeacher() + "/" + job.getCourse() + "/" + job.getClassName() + "/" + job.getNum() + "/";
+        String newFilePath = filePath + job.getTeacher() + "/" + job.getCourse() + "/" + job.getClassName() + "/" + job.getNum() + "/";
         File newFile = new File(newFilePath);
         if (!newFile.exists()) {
             newFile.mkdirs();
         }
         SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
-        String fileName = name + sdf.format(new Date()) + "_" + file.getOriginalFilename();
+        String oldFileName = file.getOriginalFilename().contains("\\") ? file.getOriginalFilename().substring(file.getOriginalFilename().lastIndexOf("\\") + 1) : file.getOriginalFilename();
+        Student student = (Student) request.getSession().getAttribute("loginUser");
+        String fileName =student.getNum() + "_" + student.getName() + "_"  + sdf.format(new Date()) + "_" + oldFileName;
         File newFile1 = new File(newFilePath + fileName);
         try {
             file.transferTo(newFile1);
@@ -67,7 +105,8 @@ public class JobController {
             return "success";
         } catch (IOException e) {
             e.printStackTrace();
+            model.addAttribute("error", "文件错误，请重新上传");
+            return "error";
         }
-        return "redirect:/job";
     }
 }
