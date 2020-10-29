@@ -26,14 +26,14 @@ public class StudentController {
 
     @PostMapping("/student/insert")
     public String saveStudent(Model model,Student student){
-        Student oldStudent = studentDao.findByNum(student.getNum());
+        Student oldStudent = studentDao.findByNumOrUserName(student.getNum(), student.getUserName());
         if(oldStudent == null){
             student.setType(1);
             student.setPassWord(DigestUtils.md5DigestAsHex(student.getPassWord().getBytes()));
             studentDao.save(student);
-            return "success";
+            return "redirect:/login";
         }else {
-            model.addAttribute("error","已经存在相同的学号，不允许重复注册。请登录试试");
+            model.addAttribute("error","已经存在相同的学号或者是用户名，不允许重复注册。请登录试试");
             return "error";
         }
     }

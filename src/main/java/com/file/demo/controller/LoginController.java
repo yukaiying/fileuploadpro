@@ -18,7 +18,7 @@ public class LoginController {
     @Autowired
     private StudentDao studentDao;
 
-    @GetMapping("/login")
+    @GetMapping({"/login","/"})
     public String showLoginPage(){
         return "login";
     }

@@ -7,5 +7,5 @@ public interface StudentDao extends JpaRepository<Student, Integer> {
 
     public Student findByUserNameAndPassWord(String userName, String passWord);
 
-    public Student findByNum(String num);
+    public Student findByNumOrUserName(String num,String userName);
 }
