@@ -10,6 +10,6 @@ public class MyMvcConfig implements WebMvcConfigurer {
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
         registry.addInterceptor(new LoginHandlerInterceptor())
-                .addPathPatterns("/job**","/fileUpload");
+                .addPathPatterns("/job**","/fileUpload","/student/**");
     }
 }

@@ -52,7 +52,7 @@ public class JobController {
         model.addAttribute("studentClassList", studentClassDao.findAll());
         Student student = (Student) request.getSession().getAttribute("loginUser");
         if (student != null) {
-            if(2 == student.getType()){
+            if(student.getType() != null && 2 == student.getType()){
                 model.addAttribute("list", jobDao.findAllByOrderByIdDesc());
                 model.addAttribute("userType", true);
             }else{

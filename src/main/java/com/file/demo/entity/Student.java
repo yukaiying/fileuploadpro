@@ -25,6 +25,9 @@ public class Student {
 
     private Integer type;
 
+    @Transient
+    private String studentClassName;
+
     public Integer getId() {
         return id;
     }
@@ -79,5 +82,13 @@ public class Student {
 
     public void setType(Integer type) {
         this.type = type;
+    }
+
+    public String getStudentClassName() {
+        return studentClassName;
+    }
+
+    public void setStudentClassName(String studentClassName) {
+        this.studentClassName = studentClassName;
     }
 }
