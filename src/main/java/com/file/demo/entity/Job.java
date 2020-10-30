@@ -22,6 +22,9 @@ public class Job {
     @Column(name = "student_num")
     private Integer studentNum;
 
+    @Column(name = "class_id")
+    private Integer classId;
+
     @Column(name = "class_name")
     private String className;
 
@@ -102,4 +105,11 @@ public class Job {
         this.createTime = createTime;
     }
 
+    public Integer getClassId() {
+        return classId;
+    }
+
+    public void setClassId(Integer classId) {
+        this.classId = classId;
+    }
 }

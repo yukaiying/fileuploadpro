@@ -39,6 +39,9 @@ public class StudentController {
 
     @PostMapping("/update")
     public String updateStudent(Student student,HttpServletRequest request){
+        if(student.getPassChange() != null && student.getPassChange() == 1){
+            student.setPassWord(DigestUtils.md5DigestAsHex(student.getPassWord().getBytes()));
+        }
         student = studentDao.save(student);
         student.setStudentClassName(studentClassDao.findById(student.getClassId()).orElseGet(StudentClass::new).getClassName());
         request.getSession().setAttribute("loginUser", student);

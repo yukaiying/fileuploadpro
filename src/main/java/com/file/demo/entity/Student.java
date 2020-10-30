@@ -28,6 +28,9 @@ public class Student {
     @Transient
     private String studentClassName;
 
+    @Transient
+    private Integer passChange;
+
     public Integer getId() {
         return id;
     }
@@ -90,5 +93,13 @@ public class Student {
 
     public void setStudentClassName(String studentClassName) {
         this.studentClassName = studentClassName;
+    }
+
+    public Integer getPassChange() {
+        return passChange;
+    }
+
+    public void setPassChange(Integer passChange) {
+        this.passChange = passChange;
     }
 }

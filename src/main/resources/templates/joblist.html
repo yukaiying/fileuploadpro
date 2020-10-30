@@ -97,7 +97,7 @@
                                     <th>第几次作业</th>
                                     <th>对应老师</th>
                                     <th>作业标题</th>
-                                    <th>已交作业人数</th>
+                                    <th th:if="${userType}">已交作业人数</th>
                                     <th>操作</th>
                                 </tr>
                                 </thead>
@@ -108,7 +108,7 @@
                                     <td th:text="${job.num}"></td>
                                     <td th:text="${job.teacher}"></td>
                                     <td th:text="${job.name}"></td>
-                                    <td>
+                                    <td th:if="${userType}">
                                         <span th:if="${job.studentNum} ne null">
                                             <span th:text="${job.studentNum}"></span>
                                         </span>
@@ -123,10 +123,9 @@
                                         <button class="btn btn-warning btn-upload" th:value="${job.id}"
                                                 data-toggle="modal" data-target="#modals-upload">上传
                                         </button>
-                                        <!--                                        <button id="bootbox-confirm" class="btn btn-danger btn-delete"-->
-                                        <!--                                                th:value="${job.id}">-->
-                                        <!--                                            删除-->
-                                        <!--                                        </button>-->
+                                        <button class="btn btn-warning btn-no" th:value="${job.id}"
+                                                data-toggle="modal" data-target="#modals-no" th:if="${userType}">未交学生
+                                        </button>
                                     </td>
                                 </tr>
                                 </tbody>
@@ -174,12 +173,10 @@
                     <div class="form-group row">
                         <label class="col-form-label col-sm-3 text-sm-right">班级</label>
                         <div class="col-sm-5">
-                            <input type="text" list="showClass" class="form-control" placeholder="班级" name="className"
-                                   required>
-                            <datalist id="showClass">
+                            <select class="form-control" name="classId">
                                 <option th:each="studentClass:${studentClassList}"
-                                        th:value="${studentClass.className}"></option>
-                            </datalist>
+                                        th:value="${studentClass.id}" th:text="${studentClass.className}"></option>
+                            </select>
                         </div>
                     </div>
                     <div class="form-group row">
@@ -224,12 +221,6 @@
                 <div style="color: red;font-size: 32px;font-weight: bold;">注意：提交后无法修改，请再次确认</div>
                 <form name="uploadForm" method="post" action="/fileUpload" enctype="multipart/form-data">
                     <input type="hidden" name="id" id="job_id">
-<!--                    <div class="form-group row">-->
-<!--                        <label class="col-form-label col-sm-3 text-sm-right">姓名</label>-->
-<!--                        <div class="col-sm-5">-->
-<!--                            <input type="text" class="form-control" placeholder="输入你的名字" name="name" required>-->
-<!--                        </div>-->
-<!--                    </div>-->
                     <div class="form-group row">
                         <label class="col-form-label col-sm-3 text-sm-right">上传作业rar架包</label>
                         <div class="col-sm-5">
@@ -242,6 +233,29 @@
                         </div>
                     </div>
                 </form>
+            </div>
+        </div>
+    </div>
+</div>
+<!--end -->
+
+<!-- upload -->
+<div class="modal modal-fill-in fade" id="modals-no">
+    <div class="modal-dialog modal-sm">
+        <div class="modal-content">
+            <button type="button" class="close text-white" data-dismiss="modal" aria-label="Close">×</button>
+
+            <div class="card-datatable table-responsive text-white">
+                <table class="datatables-demo table table-striped table-bordered">
+                    <thead>
+                    <tr>
+                        <th>未交学生名字</th>
+                    </tr>
+                    </thead>
+                    <tbody id="no_student_show_tbody" style="color: red;font-size: 2rem">
+
+                    </tbody>
+                </table>
             </div>
         </div>
     </div>

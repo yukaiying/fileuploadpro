@@ -50,4 +50,22 @@ public class LoginController {
     public String left(){
         return "left";
     }
+
+    @GetMapping("/forgetPassWord")
+    public String forgetPassWord(){
+        return "forgetpassword";
+    }
+
+    @PostMapping("/backPassWord")
+    public String backPassWord(Student student, Model model){
+        Student oldStudent = studentDao.findByNumOrUserName(student.getNum(), student.getUserName());
+        if(oldStudent != null && oldStudent.getId() != null){
+            oldStudent.setPassWord(DigestUtils.md5DigestAsHex(student.getPassWord().getBytes()));
+            studentDao.save(oldStudent);
+        }else{
+            model.addAttribute("error", "没匹配到用户名和考号，注册试试");
+            return "error";
+        }
+        return "redirect:/";
+    }
 }
