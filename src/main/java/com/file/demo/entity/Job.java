@@ -1,5 +1,8 @@
 package com.file.demo.entity;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+import org.springframework.format.annotation.DateTimeFormat;
+
 import javax.persistence.*;
 import java.util.Date;
 
@@ -30,8 +33,17 @@ public class Job {
 
     private String remark;
 
+    @Column(name = "end_time")
+    @JsonFormat(pattern = "yyyy-MM-dd", timezone = "GMT+8")
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
+    private Date endTime;
+
     @Column(name = "create_time")
     private Date createTime;
+
+    @Transient
+    private boolean isPast;
+
 
     public Integer getId() {
         return id;
@@ -111,5 +123,21 @@ public class Job {
 
     public void setClassId(Integer classId) {
         this.classId = classId;
+    }
+
+    public Date getEndTime() {
+        return endTime;
+    }
+
+    public void setEndTime(Date endTime) {
+        this.endTime = endTime;
+    }
+
+    public boolean isPast() {
+        return isPast;
+    }
+
+    public void setPast(boolean past) {
+        isPast = past;
     }
 }

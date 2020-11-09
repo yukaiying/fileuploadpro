@@ -9,6 +9,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.persistence.Transient;
 import javax.servlet.http.HttpServletRequest;
 import javax.transaction.Transactional;
 import java.io.File;
@@ -44,45 +45,54 @@ public class JobController {
 
     @GetMapping("/job")
     public String jobPage(Model model, HttpServletRequest request) {
-        jobList(model,request, null, null);
+        jobList(model, request, null, null);
         return "joblist";
     }
 
     @PostMapping("/job")
     public String jobPage(Model model, @RequestParam("className") String className, @RequestParam("course") String course, HttpServletRequest request) {
-        jobList(model,request,className,course);
+        jobList(model, request, className, course);
         return "joblist";
     }
 
-    private void jobList(Model model, HttpServletRequest request, String className, String course){
+    private void jobList(Model model, HttpServletRequest request, String className, String course) {
         model.addAttribute("course", course);
         model.addAttribute("courseList", courseDao.findAll());
         model.addAttribute("studentClassList", studentClassDao.findAll());
         Student student = (Student) request.getSession().getAttribute("loginUser");
         if (student != null) {
-            if(student.getType() != null && 2 == student.getType()){
-                model.addAttribute("list", jobDao.findAllByOrderByIdDesc());
+            if (student.getType() != null && 2 == student.getType()) {
+                model.addAttribute("list", updateIsPast(jobDao.findAllByOrderByIdDesc()));
                 model.addAttribute("userType", true);
-            }else{
+            } else {
                 className = studentClassDao.findById(student.getClassId()).orElseGet(StudentClass::new).getClassName();
-                model.addAttribute("list", jobDao.findAllByClassNameOrderByIdDesc(className));
+                model.addAttribute("list", updateIsPast(jobDao.findAllByClassNameOrderByIdDesc(className)));
                 model.addAttribute("className", className);
             }
         } else {
-            model.addAttribute("list", jobDao.findAllByClassNameAndCourseOrderByIdDesc(className, course));
+            model.addAttribute("list", updateIsPast(jobDao.findAllByClassNameAndCourseOrderByIdDesc(className, course)));
             model.addAttribute("className", className);
         }
     }
 
+    private List<Job> updateIsPast(List<Job> jobs) {
+        return jobs.stream().peek(i -> i.setPast(i.getEndTime() != null && (new Date()).before(i.getEndTime()))).collect(Collectors.toList());
+    }
+
     @PostMapping("/jobSave")
+    @Transactional
     public String jobSave(Job job) {
+        boolean flag = false;
         if (job.getId() == null) {
             job.setCreateTime(new Date());
+            flag = true;
         }
         job.setClassName(studentClassDao.findById(job.getClassId()).orElseGet(StudentClass::new).getClassName());
         job = jobDao.save(job);
-        int jobId = job.getId();
-        jobNoDao.saveAll(studentDao.findAllByClassId(job.getClassId()).stream().map(i -> new JobNo(jobId, i.getId(), i.getName())).collect(Collectors.toList()));
+        if (flag) {
+            int jobId = job.getId();
+            jobNoDao.saveAll(studentDao.findAllByClassId(job.getClassId()).stream().map(i -> new JobNo(jobId, i.getId(), i.getName())).collect(Collectors.toList()));
+        }
         return "redirect:/job";
     }
 
@@ -112,10 +122,7 @@ public class JobController {
         File newFile1 = new File(newFilePath + fileName);
         try {
             file.transferTo(newFile1);
-            job.setStudentNum(job.getStudentNum() == null ? 1 : job.getStudentNum() + 1);
-            jobDao.save(job);
             jobNoDao.deleteByJobIdAndStudentId(job.getId(), student.getId());
-            jobCompleteDao.save(new JobComplete(job.getId(), student.getId(), student.getName()));
             return "success";
         } catch (IOException e) {
             e.printStackTrace();

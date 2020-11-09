@@ -10,4 +10,7 @@ public interface JobNoDao extends JpaRepository<JobNo, Integer> {
     public List<JobNo> findAllByJobId(Integer id);
 
     public void deleteByJobIdAndStudentId(Integer jobId, Integer studentId);
+
+    public void deleteByJobId(Integer id);
+
 }

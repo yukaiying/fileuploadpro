@@ -14,15 +14,25 @@ repositories {
 }
 
 dependencies {
-    implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
-    implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
-    implementation 'org.springframework.boot:spring-boot-starter-web'
+    compile('org.springframework.boot:spring-boot-starter-data-jpa')
+    compile('org.springframework.boot:spring-boot-starter-thymeleaf')
+//    compile('org.springframework.boot:spring-boot-starter-log4j2')
+    compile('org.springframework.boot:spring-boot-starter-web')
+//            {
+//        exclude module: 'slf4j-log4j12'
+//        exclude module: 'log4j'
+//    }
+//    compile('com.lmax:disruptor')
     runtimeOnly 'mysql:mysql-connector-java'
     testImplementation('org.springframework.boot:spring-boot-starter-test') {
         exclude group: 'org.junit.vintage', module: 'junit-vintage-engine'
     }
 }
 
+//configurations {
+//    compile.exclude module:
+//    all*.exclude group:'org.springframework.boot', module: 'spring-boot-starter-logging'
+//}
 jar {
     baseName = 'ahead'
     version = '0.0.1'

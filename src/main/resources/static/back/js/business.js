@@ -6,6 +6,11 @@ function updateTable(updateUrl, fromName,) {
                     i.value = data[i.name] != undefined ? data[i.name] : "";
                 }
             });
+            Array.of(...$("option")).forEach(i => {
+                if(i.value == data["classId"]){
+                    i.setAttribute("selected","selected");
+                }
+            });
            Array.of(... $("textarea")).forEach(i => i.innerText = data[i.name]);
         }, "json");
     });

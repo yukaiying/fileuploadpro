@@ -9,7 +9,9 @@ $(document).ready(function () {
         let jobId = this.value;
         $.post('/jobNo/byJobId/' + jobId,null,function (data) {
             let tbody = $("#no_student_show_tbody")[0];
-            tbody.innerHTML = Array.of(...data).map(i => `<tr><td>${i.studentName}</td></tr>`).join("");
+            let result = Array.of(...data);
+            tbody.innerHTML = result.map(i => `<tr><td>${i.studentName}</td></tr>`).join("");
+            $("#no_job_num")[0].innerHTML ="未交作业学生数目：" + result.length;
         });
     });
 });
